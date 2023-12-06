@@ -98,11 +98,18 @@ std::function<void(SOCKET clientSocket)> PlcService::GenerateServiceRoutine() {
 					break;
 				case PlcServiceCommand::START:
 					// TODO: Start PLC
-					// cout << "START" << std::endl;
-					buff[0] = PlcServiceCommand::START;
 					this->selected_variable_grp_id = recv_buff[1];
 					std::cout << "Monitoring Variable Group: " << selected_variable_grp_id << std::endl;
 					this->plc->setPlcVarGrp(static_cast<int>(this->selected_variable_grp_id));
+
+					// FIXME: Clear data_pool buffer, avoid blocking client process.
+					this->data_mtx.lock_shared();
+					_init_data_length = this->data_pool->length();
+					this->data_pool->dequeue_memcpy(NULL, _init_data_length);
+					this->data_mtx.unlock_shared();
+
+					// cout << "START" << std::endl;
+					buff[0] = PlcServiceCommand::START;
 					send(clientSocket, buff, 1, 0);
 					break;
 				case PlcServiceCommand::STOP:
