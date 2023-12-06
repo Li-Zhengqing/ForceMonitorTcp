@@ -47,6 +47,7 @@ private:
     AdsVersion* pVersion = &Version;
 
     unsigned long lHdlVar;
+    unsigned long lHdlVarGrpId;
 
     PLC_BUFFER_TYPE data[PLC_BUFFER_SIZE];
     PLC_BUFFER_TYPE temp[PLC_BUFFER_SIZE];
@@ -75,6 +76,10 @@ public:
     long stopPlc();
 
     long initPlcVarHdl();
+
+    long initPlcVarSelectHdl();
+
+    long setPlcVarGrp(int selected_variable_grp_id);
 
     long queryPlcData();
 

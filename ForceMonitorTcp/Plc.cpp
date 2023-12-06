@@ -96,6 +96,7 @@ long Plc::startPlc() {
 
     this->plc_previous_index = -1;
     this->initPlcVarHdl();
+    this->initPlcVarSelectHdl();
 
     // this->timer.start(200, std::bind(fetchData, this));
     return 0;
@@ -205,6 +206,31 @@ size_t Plc::fetchDataFromPlc(PLC_BUFFER_TYPE* temp) {
     */
 
     return data_length;
+}
+
+long Plc::initPlcVarSelectHdl() {
+    char grpIdVar[] = { "MAIN.var_grp_id" };
+    nErr = AdsSyncReadWriteReq(pAddr, ADSIGRP_SYM_HNDBYNAME, 0x0, sizeof(lHdlVarGrpId), &lHdlVarGrpId, sizeof(grpIdVar), grpIdVar);
+    if (nErr) {
+        LOG(WARNING) << "Error when initializing variable handler: " << nErr;
+        // LOG(FATAL) << "Error when initializing variable handler: " << nErr;
+        return nErr;
+    }
+
+    LOG(INFO) << "lHdlVarGrpId: " << lHdlVarGrpId;
+    // TODO
+    return 0;
+}
+
+long Plc::setPlcVarGrp(int selected_variable_grp_id) {
+    int var_grp_id = selected_variable_grp_id;
+    nErr = AdsSyncWriteReq(pAddr, ADSIGRP_SYM_VALBYHND, lHdlVarGrpId, sizeof(var_grp_id), &var_grp_id);
+    if (nErr) {
+        // Comment for debug
+        LOG(WARNING) << "Error when setting PLC var_grp_id: " << nErr;
+        return nErr;
+    }
+    return 0;
 }
 
 /*

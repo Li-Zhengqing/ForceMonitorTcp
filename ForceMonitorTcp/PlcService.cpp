@@ -100,6 +100,9 @@ std::function<void(SOCKET clientSocket)> PlcService::GenerateServiceRoutine() {
 					// TODO: Start PLC
 					// cout << "START" << std::endl;
 					buff[0] = PlcServiceCommand::START;
+					this->selected_variable_grp_id = recv_buff[1];
+					std::cout << "Monitoring Variable Group: " << selected_variable_grp_id << std::endl;
+					this->plc->setPlcVarGrp(static_cast<int>(this->selected_variable_grp_id));
 					send(clientSocket, buff, 1, 0);
 					break;
 				case PlcServiceCommand::STOP:

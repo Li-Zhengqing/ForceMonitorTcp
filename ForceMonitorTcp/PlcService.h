@@ -24,6 +24,8 @@ private:
 	PLC_BUFFER_TYPE* temp;
 	RingQueue<PLC_BUFFER_TYPE>* data_pool;
 
+	int selected_variable_grp_id;
+
 public:
 	PlcService();
 	~PlcService();
